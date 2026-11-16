@@ -1,0 +1,14 @@
+const express=require("express"),fs=require("fs"),path=require("path"),multer=require("multer");
+const app=express(),PORT=process.env.PORT||3000,DB=path.join(__dirname,"data.json");
+const upload=multer({dest:path.join(__dirname,"uploads"),limits:{fileSize:5*1024*1024}});
+app.use(express.json());app.use(express.static(path.join(__dirname,"public")));
+const read=()=>JSON.parse(fs.readFileSync(DB,"utf8")),write=d=>fs.writeFileSync(DB,JSON.stringify(d,null,2));
+app.get("/api/health",(q,s)=>s.json({status:"ok",service:"Amazon NEXT"}));
+app.get("/api/products",(q,s)=>{let{q:term="",category="All",sort="featured"}=q.query;let a=read().products.filter(p=>(category==="All"||p.category===category)&&(p.name+" "+p.brand+" "+p.description).toLowerCase().includes(term.toLowerCase()));if(sort==="price-low")a.sort((x,y)=>x.price-y.price);if(sort==="price-high")a.sort((x,y)=>y.price-x.price);if(sort==="rating")a.sort((x,y)=>y.rating-x.rating);s.json(a)});
+app.get("/api/products/:id",(q,s)=>{let p=read().products.find(x=>x.id===q.params.id);p?s.json(p):s.status(404).json({error:"Not found"})});
+app.get("/api/compare",(q,s)=>{let ids=(q.query.ids||"").split(",");s.json(read().products.filter(p=>ids.includes(p.id)))});
+app.post("/api/assistant",(q,s)=>{let m=String(q.body.message||"").toLowerCase();if(!m)return s.status(400).json({error:"Enter a message"});let ps=read().products.filter(p=>(p.name+" "+p.category+" "+p.description).toLowerCase().split(/\\W+/).some(w=>w.length>3&&m.includes(w))).slice(0,3);s.json({reply:"Here is a starter shortlist from the demo catalogue. Add a budget or key feature to refine it.",recommendations:ps.length?ps:read().products.slice(0,3)})});
+app.post("/api/price-alerts",(q,s)=>{let d=read(),p=d.products.find(x=>x.id===q.body.productId),n=Number(q.body.targetPrice);if(!p||!Number.isFinite(n)||n<=0)return s.status(400).json({error:"Invalid product or target price"});let a={id:"a"+Date.now(),productId:p.id,targetPrice:n,email:q.body.email||"demo@example.com",createdAt:new Date().toISOString()};d.alerts.push(a);write(d);s.status(201).json(a)});
+app.get("/api/price-alerts",(q,s)=>s.json(read().alerts));
+app.post("/api/visual-search",upload.single("image"),(q,s)=>{if(!q.file)return s.status(400).json({error:"Upload an image"});let c=q.body.category||"All",matches=read().products.filter(p=>c==="All"||p.category===c).slice(0,4);fs.unlink(q.file.path,()=>{});s.json({note:"Demo visual search: category matching only. Add a vision model for image recognition.",matches})});
+app.listen(PORT,()=>console.log("Amazon NEXT at http://localhost:"+PORT));
