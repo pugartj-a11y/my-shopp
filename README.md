@@ -1,48 +1,34 @@
 # Amazon NEXT
 
-A premium, responsive full-stack marketplace prototype. This is an independent demo and is not affiliated with Amazon.
+Premium responsive marketplace demo configured for **GitHub Pages**.
 
-## Features
-- Responsive storefront with search, categories, sorting and product cards
-- Product bag/cart demo
-- Product comparison (up to four products)
-- AI shopping assistant demo endpoint (catalogue keyword matching; no external LLM required)
-- Image upload visual-search demo endpoint (category-based matching; connect a vision model for semantic image recognition)
-- Price alert creation and server-side JSON persistence
-- Express API and seeded catalogue
+## Open the live website
+After the first successful workflow run, the site is published at:
+https://pugartj-a11y.github.io/my-shopp/
 
-## Requirements
-- Node.js 18+
+## Automatic deployment
+Every push to the `main` branch runs `.github/workflows/deploy-pages.yml` and publishes the `public/` folder. You can also start deployment manually from the **Actions** tab.
+
+If the first deployment does not start, open **Settings → Pages** in the repository and set **Build and deployment → Source** to **GitHub Actions**.
 
 ## Run locally
+No Node.js or build step is required for the GitHub Pages version. Open `public/index.html` in a browser, or use VS Code Live Server.
+
+The Express server remains available as an optional local development backend:
 ```bash
 npm install
 npm start
-```
-Open http://localhost:3000
+``
 
-## API
-- `GET /api/health`
-- `GET /api/products?q=&category=&sort=`
-- `GET /api/products/:id`
-- `GET /api/compare?ids=p1,p2`
-- `POST /api/assistant` JSON `{ "message": "..." }`
-- `POST /api/visual-search` multipart form: `image`, optional `category`
-- `POST /api/price-alerts` JSON `{ "productId":"p1", "targetPrice":150, "email":"you@example.com" }`
-- `GET /api/price-alerts`
+## Included demo features
+- Responsive product catalogue, search, categories and sorting
+- Shopping bag saved in browser localStorage
+- Compare up to four products
+- Keyword-based shopping helper (not a connected LLM)
+- Image-picker demo with category matching (no image recognition or upload)
+- Price-alert notes saved in browser localStorage (no automatic price monitoring or email)
 
-## Production integrations still required
-The demo deliberately does not collect payment details or claim real Amazon inventory. Before production, add:
-1. Authentication and authorization (e.g. Auth.js or managed identity provider).
-2. PostgreSQL and migrations instead of `data.json`.
-3. A compliant product data source / seller catalogue API and scheduled price updates.
-4. A real LLM provider for grounded AI recommendations and moderation.
-5. A vision model and secure image storage for semantic visual search.
-6. Email provider + background jobs for price notifications.
-7. Payment provider hosted checkout, tax, shipping and refund workflows.
-8. Rate limiting, CSRF protection where applicable, validation, logging, tests, backups and monitoring.
+## GitHub Pages limitations
+GitHub Pages serves static files only. It cannot run `server.js`, Express routes, scheduled jobs, databases, payment processing, email delivery or private API keys. Real AI, image recognition, user accounts, live price tracking and notifications need a separate backend service.
 
-## Notes
-- `data.json` is seeded demo data. Do not use it as a multi-user production database.
-- Uploaded visual-search images are deleted after the demo request.
-- Product names and prices are fictional sample catalogue data.
+This is an independent demo with fictional sample product data and is not affiliated with Amazon.
