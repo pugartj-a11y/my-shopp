@@ -1,34 +1,23 @@
 # Amazon NEXT
 
-Premium responsive marketplace demo configured for **GitHub Pages**.
+A static premium marketplace demo. The site opens directly from the root `index.html`.
 
-## Open the live website
-After the first successful workflow run, the site is published at:
+## Live website
 https://pugartj-a11y.github.io/my-shopp/
 
-## Automatic deployment
-Every push to the `main` branch runs `.github/workflows/deploy-pages.yml` and publishes the `public/` folder. You can also start deployment manually from the **Actions** tab.
+## GitHub Pages deployment
+The workflow `.github/workflows/deploy-pages.yml` publishes the repository root on every push to `main`. In repository Settings → Pages, choose **GitHub Actions** as the deployment source.
 
-If the first deployment does not start, open **Settings → Pages** in the repository and set **Build and deployment → Source** to **GitHub Actions**.
+## Project files
+- `index.html` — website entry point
+- `styles.css` — responsive styling
+- `app.js` — browser interactions and localStorage
+- `products.js` — demo product catalogue
+- `.github/workflows/deploy-pages.yml` — automatic deployment
 
-## Run locally
-No Node.js or build step is required for the GitHub Pages version. Open `public/index.html` in a browser, or use VS Code Live Server.
+No Node.js installation or build command is required. GitHub Pages serves `index.html` automatically.
 
-The Express server remains available as an optional local development backend:
-```bash
-npm install
-npm start
-``
+## Demo limitations
+Cart, compare list and price-alert notes are saved in the current browser only. The shopping helper uses simple keyword matching. Image search is a category-based demo, not image recognition. No live prices, email alerts, account system, payments or server-side AI are connected.
 
-## Included demo features
-- Responsive product catalogue, search, categories and sorting
-- Shopping bag saved in browser localStorage
-- Compare up to four products
-- Keyword-based shopping helper (not a connected LLM)
-- Image-picker demo with category matching (no image recognition or upload)
-- Price-alert notes saved in browser localStorage (no automatic price monitoring or email)
-
-## GitHub Pages limitations
-GitHub Pages serves static files only. It cannot run `server.js`, Express routes, scheduled jobs, databases, payment processing, email delivery or private API keys. Real AI, image recognition, user accounts, live price tracking and notifications need a separate backend service.
-
-This is an independent demo with fictional sample product data and is not affiliated with Amazon.
+Independent demo project; not affiliated with Amazon.
